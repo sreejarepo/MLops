@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Heart Disease MLOps
 
 Educational end-to-end classifier using the UCI Heart Disease dataset. This project is not a clinical diagnostic system.
