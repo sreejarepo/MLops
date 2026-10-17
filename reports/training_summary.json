@@ -1,0 +1,35 @@
+{
+  "selected_model": "logistic_regression",
+  "selection_metric": "mean 5-fold CV ROC-AUC",
+  "selection_score": 0.9024779568257829,
+  "models": [
+    {
+      "model": "logistic_regression",
+      "cv_accuracy_mean": 0.8551870748299321,
+      "cv_precision_mean": 0.8730744935655421,
+      "cv_recall_mean": 0.8098814229249012,
+      "cv_f1_mean": 0.8365444245676803,
+      "cv_roc_auc_mean": 0.9024779568257829,
+      "test_accuracy": 0.8688524590163934,
+      "test_precision": 0.8125,
+      "test_recall": 0.9285714285714286,
+      "test_f1": 0.8666666666666667,
+      "test_roc_auc": 0.9664502164502166,
+      "run_id": "0c0b1bf0d00d438fac36cac40b4dde71"
+    },
+    {
+      "model": "random_forest",
+      "cv_accuracy_mean": 0.8013605442176871,
+      "cv_precision_mean": 0.7898837197262288,
+      "cv_recall_mean": 0.7826086956521738,
+      "cv_f1_mean": 0.7810606331338039,
+      "cv_roc_auc_mean": 0.8954528563224216,
+      "test_accuracy": 0.9016393442622951,
+      "test_precision": 0.84375,
+      "test_recall": 0.9642857142857143,
+      "test_f1": 0.9,
+      "test_roc_auc": 0.9502164502164503,
+      "run_id": "7df0d8825fac4e0e8954c8edd8a5a233"
+    }
+  ]
+}

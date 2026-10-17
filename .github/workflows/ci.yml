@@ -1,0 +1,35 @@
+name: heart-disease-mlops-ci
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-and-train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Lint
+        run: ruff check src tests download_data.py
+      - name: Unit tests
+        run: pytest -q --junitxml=pytest-report.xml
+      - name: Download UCI dataset
+        run: python download_data.py
+      - name: Train and log experiments
+        run: python -m src.train
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: training-and-test-artifacts
+          path: |
+            pytest-report.xml
+            reports/
+            models/
+            mlruns/
