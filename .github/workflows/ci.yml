@@ -21,6 +21,8 @@ jobs:
         run: pytest -q --junitxml=pytest-report.xml
       - name: Download UCI dataset
         run: python download_data.py
+      - name: Execute EDA notebook
+        run: jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb --output /tmp/01_eda_executed.ipynb
       - name: Train and log experiments
         run: python -m src.train
       - name: Upload run artifacts

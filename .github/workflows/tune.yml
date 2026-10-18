@@ -1,0 +1,29 @@
+name: heart-disease-mlops-tune
+on:
+  workflow_dispatch:
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Download UCI dataset
+        run: python download_data.py
+      - name: Train baselines
+        run: python -m src.train
+      - name: Tune hyperparameters (GridSearchCV)
+        run: python -m src.tune --no-promote
+      - name: Upload tuning artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuning-artifacts
+          path: |
+            reports/tuning_summary.json
+            mlruns/
