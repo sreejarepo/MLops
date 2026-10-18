@@ -20,7 +20,7 @@ src/
   api.py                FastAPI service (/predict, /health, /metrics/)
 notebooks/01_eda.ipynb  EDA (executed, outputs saved)
 tests/                  pytest suite (data, cleaning, model, train, tune, inference, API)
-Dockerfile              API image (runtime deps only: requirements-api.txt)
+Dockerfile              API image (runtime deps only: requirements.txt)
 docker-compose.yml      API + Prometheus + Grafana
 k8s/deployment.yaml     Deployment (2 replicas, probes) + LoadBalancer Service
 monitoring/             prometheus.yml + provisioned Grafana datasource and dashboard
@@ -37,9 +37,6 @@ python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
-
-`requirements.txt` includes `requirements-api.txt` (the runtime-only subset used by the
-Docker image). Versions of numpy / pandas / scikit-learn / scipy / mlflow / skops are pinned.
 
 ## 2. Data
 
