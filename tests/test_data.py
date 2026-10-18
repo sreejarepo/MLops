@@ -12,13 +12,35 @@ def test_load_dataset_converts_target_and_missing(tmp_path):
     assert df["target"].tolist() == [0, 1, 1]
     assert pd.isna(df.loc[1, "chol"])
 
+
 def test_load_dataset_requires_target(tmp_path):
     path = tmp_path / "bad.csv"
     pd.DataFrame({"age": [50]}).to_csv(path, index=False)
     with pytest.raises(ValueError):
         load_dataset(path)
 
+
+def test_load_dataset_rejects_empty_file(tmp_path):
+    path = tmp_path / "empty.csv"
+    pd.DataFrame({"age": [], "target": []}).to_csv(path, index=False)
+    with pytest.raises(ValueError, match="empty"):
+        load_dataset(path)
+
+
+def test_load_dataset_normalises_column_names(tmp_path):
+    path = tmp_path / "names.csv"
+    pd.DataFrame({" Age ": [50, 60], "TARGET": [0, 3]}).to_csv(path, index=False)
+    df = load_dataset(path)
+    assert list(df.columns) == ["age", "target"]
+    assert df["target"].tolist() == [0, 1]
+
+
 def test_split_features_target():
     X, y = split_features_target(pd.DataFrame({"age": [40, 50], "target": [0, 1]}))
     assert list(X.columns) == ["age"]
     assert y.tolist() == [0, 1]
+
+
+def test_split_features_target_requires_target():
+    with pytest.raises(ValueError):
+        split_features_target(pd.DataFrame({"age": [40]}))

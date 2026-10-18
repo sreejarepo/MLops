@@ -1,16 +1,11 @@
-#services:
-#  heart-disease-api:
-#    build: .
-#    ports:
-#      - "8000:8000"
-#    environment:
-#      MODEL_PATH: /app/models/heart_disease_model.joblib
-#      MODEL_VERSION: "1.0.0"
-#    restart: unless-stopped
-
+# API + Prometheus + Grafana.   docker compose up --build
+#   API         http://localhost:8002   (docs at /docs, metrics at /metrics/)
+#   Prometheus  http://localhost:9090   (check Status -> Targets)
+#   Grafana     http://localhost:3000   (admin / admin; dashboard auto-provisioned)
 services:
   heart-disease-api:
     build: .
+    image: heart-disease-api:1.0.0
     ports:
       - "8002:8000"
     environment:
@@ -19,7 +14,7 @@ services:
     restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.53.0
     ports:
       - "9090:9090"
     volumes:
@@ -29,9 +24,12 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.1.0
     ports:
       - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
     restart: unless-stopped

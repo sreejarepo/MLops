@@ -4,4 +4,5 @@ scrape_configs:
   - job_name: heart-disease-api
     metrics_path: /metrics
     static_configs:
-      - targets: ["host.docker.internal:8000"]
+      - targets: ["heart-disease-api:8000"]
+

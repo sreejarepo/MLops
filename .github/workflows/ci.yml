@@ -1,37 +1,121 @@
 name: heart-disease-mlops-ci
+
 on:
   push:
   pull_request:
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: "3.11"
+  MLFLOW_TRACKING_URI: sqlite:///mlflow.db
+
 jobs:
-  test-and-train:
+  lint:
+    name: Lint (ruff)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install ruff
+        run: pip install "ruff>=0.4,<1"
+      - name: Ruff check
+        run: ruff check src tests download_data.py
+
+  test:
+    name: Unit tests (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+          cache-dependency-path: requirements*.txt
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Lint
-        run: ruff check src tests download_data.py
-      - name: Unit tests
-        run: pytest -q --junitxml=pytest-report.xml
+      - name: Run tests
+        run: pytest -v --tb=short --junitxml=pytest-report.xml
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: pytest-report.xml
+
+  train:
+    name: Data, EDA notebook and model training
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
       - name: Download UCI dataset
         run: python download_data.py
+      - name: Build cleaned dataset
+        run: python -m src.clean
       - name: Execute EDA notebook
-        run: jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb --output /tmp/01_eda_executed.ipynb
+        run: >
+          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb
+          --output-dir "$RUNNER_TEMP" --output 01_eda_executed.ipynb
       - name: Train and log experiments
         run: python -m src.train
+      - name: Publish metrics to the job summary
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          s = json.load(open("reports/training_summary.json"))
+          print("### Training results\n")
+          print("| model | CV ROC-AUC | test acc | test precision | test recall | test ROC-AUC |")
+          print("|---|---|---|---|---|---|")
+          for m in s["models"]:
+              print(f"| {m['model']} | {m['cv_roc_auc_mean']:.3f} | {m['test_accuracy']:.3f} | "
+                    f"{m['test_precision']:.3f} | {m['test_recall']:.3f} | {m['test_roc_auc']:.3f} |")
+          print(f"\nSelected: **{s['selected_model']}** (mean 5-fold CV ROC-AUC {s['selection_score']:.4f})")
+          PY
       - name: Upload run artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: training-and-test-artifacts
+          name: training-artifacts
+          if-no-files-found: warn
           path: |
-            pytest-report.xml
             reports/
             models/
+            data/processed/
+            mlflow.db
             mlruns/
+            ${{ runner.temp }}/01_eda_executed.ipynb
+
+  docker:
+    name: Docker build and smoke test
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t heart-disease-api:ci .
+      - name: Run container and call the API
+        run: |
+          docker run -d --name api -p 8000:8000 heart-disease-api:ci
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/health && break
+            sleep 2
+          done
+          curl -sf http://localhost:8000/health
+          curl -sf -X POST http://localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"age":58,"sex":1,"cp":3,"trestbps":140,"chol":240,"fbs":0,"restecg":1,"thalach":150,"exang":0,"oldpeak":1.0,"slope":2,"ca":0,"thal":2}' \
+            | tee response.json
+          grep -q '"confidence"' response.json
+          curl -sf http://localhost:8000/metrics/ | grep -q api_requests_total
+      - name: Container logs
+        if: always()
+        run: docker logs api
