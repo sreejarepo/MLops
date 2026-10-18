@@ -1,6 +1,6 @@
-import fastapi.testclient as testclient
 import joblib
 import pytest
+from fastapi import testclient
 
 from src import api
 from src.preprocessing import make_models

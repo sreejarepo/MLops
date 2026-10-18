@@ -15,7 +15,7 @@
       "test_recall": 0.9285714285714286,
       "test_f1": 0.8666666666666667,
       "test_roc_auc": 0.9664502164502166,
-      "run_id": "0c0b1bf0d00d438fac36cac40b4dde71"
+      "run_id": "2eb33da5561b457f963dc008675bdf4c"
     },
     {
       "model": "random_forest",
@@ -29,7 +29,7 @@
       "test_recall": 0.9642857142857143,
       "test_f1": 0.9,
       "test_roc_auc": 0.9502164502164503,
-      "run_id": "7df0d8825fac4e0e8954c8edd8a5a233"
+      "run_id": "d1d2f37cbd2a4cc187a0277a7945adc8"
     }
   ]
 }

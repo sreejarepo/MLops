@@ -32,7 +32,7 @@ def clean_dataset(df: pd.DataFrame):
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
     report = {
-        "rows_in": int(len(df)),
+        "rows_in": len(df),
         "duplicates_dropped": int(df.duplicated().sum()),
         "missing_before": {c: int(n) for c, n in df.isna().sum().items() if n > 0},
         "imputation": {},
@@ -52,7 +52,7 @@ def clean_dataset(df: pd.DataFrame):
         df[col] = df[col].astype(int)
     df[TARGET] = df[TARGET].astype(int)
 
-    report["rows_out"] = int(len(df))
+    report["rows_out"] = len(df)
     report["missing_after"] = int(df.isna().sum().sum())
     report["class_counts"] = {str(k): int(v) for k, v in df[TARGET].value_counts().sort_index().items()}
     return df, report

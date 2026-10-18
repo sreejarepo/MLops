@@ -1,0 +1,12 @@
+{
+  "final_model": "random_forest",
+  "source": "tuned",
+  "cv_roc_auc_mean": 0.9051546681981465,
+  "best_params": {
+    "classifier__max_depth": 6,
+    "classifier__max_features": "log2",
+    "classifier__min_samples_leaf": 2,
+    "classifier__n_estimators": 400
+  },
+  "model_file": "heart_disease_model.joblib"
+}

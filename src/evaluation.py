@@ -2,11 +2,8 @@
 classification-report artifacts used by both train.py and tune.py."""
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-from sklearn.metrics import (  # noqa: E402
+import matplotlib.pyplot as plt
+from sklearn.metrics import (
     ConfusionMatrixDisplay,
     RocCurveDisplay,
     accuracy_score,
@@ -16,6 +13,8 @@ from sklearn.metrics import (  # noqa: E402
     recall_score,
     roc_auc_score,
 )
+
+plt.switch_backend("Agg")  # headless: never try to open a window
 
 
 def compute_test_metrics(y_true, pred, proba) -> dict:

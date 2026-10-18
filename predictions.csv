@@ -1,0 +1,2 @@
+age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal,prediction,p_disease,p_no_disease,prediction_label
+58,1,3,140,240,0,1,150,0,1.0,2,0,2,0,0.47659306121207407,0.5234069387879259,no_disease

@@ -9,19 +9,18 @@ import json
 from pathlib import Path
 
 import joblib
-import matplotlib
+import matplotlib.pyplot as plt
+import mlflow
+import mlflow.sklearn
+import seaborn as sns
+from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
 
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-import mlflow  # noqa: E402
-import mlflow.sklearn  # noqa: E402
-import seaborn as sns  # noqa: E402
-from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split  # noqa: E402
+from src.data import load_dataset, split_features_target
+from src.evaluation import compute_test_metrics, save_eval_artifacts
+from src.preprocessing import make_models
+from src.tracking import SKOPS_TRUSTED_TYPES, setup_mlflow
 
-from src.data import load_dataset, split_features_target  # noqa: E402
-from src.evaluation import compute_test_metrics, save_eval_artifacts  # noqa: E402
-from src.preprocessing import make_models  # noqa: E402
-from src.tracking import SKOPS_TRUSTED_TYPES, setup_mlflow  # noqa: E402
+plt.switch_backend("Agg")  # headless: never try to open a window
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA = ROOT / "data" / "raw" / "heart_disease.csv"

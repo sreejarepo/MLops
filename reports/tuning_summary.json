@@ -6,7 +6,6 @@
       "model": "logistic_regression",
       "best_params": {
         "classifier__C": 0.1,
-        "classifier__penalty": "l2",
         "classifier__solver": "liblinear"
       },
       "tuned_cv_roc_auc": 0.9031400966183576,
