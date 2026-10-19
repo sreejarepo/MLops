@@ -4,6 +4,8 @@ End-to-end MLOps project on the UCI Heart Disease dataset: EDA, model training a
 tuning, MLflow experiment tracking, tests + CI/CD, Docker, Kubernetes deployment and
 Prometheus/Grafana monitoring. **Educational project - not a clinical diagnostic system.**
 
+**Demo video:** <ADD VIDEO LINK> - **Report:** `report/REPORT.md` (PDF export in `report/`)
+
 ## Repository layout
 
 ```
@@ -134,24 +136,42 @@ p95 latency, predictions by class, status codes, 5xx rate.
 
 ## 9. Kubernetes (Minikube)
 
+The image is built on the host with Docker (section 8) and is not in a registry, so it is loaded into
+the cluster. `k8s/deployment.yaml` uses `imagePullPolicy: IfNotPresent` for this reason.
+
 ```bash
 minikube start --driver=docker
-minikube image build -t heart-disease-api:1.0.0 .     # or: eval $(minikube docker-env) && docker build ...
-kubectl apply -f k8s/deployment.yaml
-kubectl get pods                                      # expect 2/2 Running
-kubectl get svc heart-disease-api
+minikube image load heart-disease-api:1.0.0
+minikube kubectl -- apply -f k8s/deployment.yaml
+minikube kubectl -- rollout status deployment/heart-disease-api
+minikube kubectl -- get pods,svc                      # expect 2 pods Running 1/1
 ```
 
-Expose the LoadBalancer: run `minikube tunnel` in a separate terminal (the service then gets an
-EXTERNAL-IP), or use `minikube service heart-disease-api --url`. Then:
+`minikube kubectl --` runs the kubectl that comes with Minikube, so no separate kubectl install is
+needed. If you have kubectl installed, use plain `kubectl` instead.
+
+Reach the service. Port-forward is the simplest; leave it running in a separate terminal:
 
 ```bash
-curl http://<URL>/health
-curl -X POST http://<URL>/predict -H "Content-Type: application/json" -d '{...}'
+minikube kubectl -- port-forward svc/heart-disease-api 8080:80
 ```
 
+Then, from another terminal:
+
+```bash
+curl http://127.0.0.1:8080/health
+curl -X POST http://127.0.0.1:8080/predict -H "Content-Type: application/json" \
+  -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}'
+minikube kubectl -- logs deploy/heart-disease-api --tail=20
+```
+
+Alternative: run `minikube tunnel` in a separate terminal so the LoadBalancer service gets an
+EXTERNAL-IP, and call that address on port 80. The cluster state from my run is saved in
+`reports/k8s_state.txt`.
+
 **Access instructions for graders (local deployment):** the API is deployed on a local Minikube
-cluster; follow the commands above, or see `screenshots/` and the demo video for the verified run.
+cluster. Follow the commands above and call it at `http://127.0.0.1:8080`, or see `screenshots/` and
+the demo video for the verified run.
 
 ## 10. CI/CD (GitHub Actions)
 
