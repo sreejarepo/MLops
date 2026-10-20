@@ -1,10 +1,16 @@
+## Important Note
+The final end-to-end report is available at [`report/REPORT.md`](report/REPORT.md).
+Please refer to it for all links, steps, screenshots, output values, observations and analysis.
+
+
 # Heart Disease MLOps
 
 End-to-end MLOps project on the UCI Heart Disease dataset: EDA, model training and
 tuning, MLflow experiment tracking, tests + CI/CD, Docker, Kubernetes deployment and
 Prometheus/Grafana monitoring. **Educational project - not a clinical diagnostic system.**
 
-**Demo video:** <ADD VIDEO LINK> - **Report:** `report/REPORT.md` (PDF export in `report/`)
+**Demo video:** https://drive.google.com/file/d/19tLMqSR8QTFi2KamsZ3QJQGIrb-G8ACh/view?usp=drive_link 
+**Report:** `report/REPORT.md` (PDF export in `report/`)
 
 ## Repository layout
 
