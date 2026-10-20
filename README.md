@@ -1,5 +1,6 @@
 ## Important Note
-The final end-to-end report is available at [`report/REPORT.md`](report/REPORT.md).
+
+The final end-to-end report is available as [`report/REPORT.pdf`](report/REPORT.pdf) (PDF) and [`report/REPORT.md`](report/REPORT.md) (Markdown).
 Please refer to it for all links, steps, screenshots, output values, observations and analysis.
 
 
@@ -10,7 +11,7 @@ tuning, MLflow experiment tracking, tests + CI/CD, Docker, Kubernetes deployment
 Prometheus/Grafana monitoring. **Educational project - not a clinical diagnostic system.**
 
 **Demo video:** https://drive.google.com/file/d/19tLMqSR8QTFi2KamsZ3QJQGIrb-G8ACh/view?usp=drive_link 
-**Report:** `report/REPORT.md` (PDF export in `report/`)
+**Report:** `report/REPORT.md` (PDF export in `report/REPORT.pdf`)
 
 ## Repository layout
 
