@@ -1,11 +1,9 @@
 # Heart Disease Prediction: End-to-End MLOps
 **Student:** SREEJA V J  
 **Course:** MLOps (AIMLCZG523), Assignment 01  
-**Repository:** https://github.com/sreejarepo/MLops  
+**Repository:** https://github.com/sreejarepo/MLops 
 **Date:** 18-10-2026  
-**Demo video:** <ADD VIDEO LINK>
-
-> Educational project. The model is **not** a medical diagnostic device.
+**Demo video:** https://drive.google.com/file/d/19tLMqSR8QTFi2KamsZ3QJQGIrb-G8ACh/view?usp=sharing
 
 ## 1. Abstract and objectives
 This project builds a binary classifier that predicts the presence of heart disease from the 13 clinical
